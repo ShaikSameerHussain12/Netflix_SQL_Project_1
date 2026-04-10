@@ -19,21 +19,24 @@ The data for this project is sourced from the Kaggle dataset:
 - **Dataset Link:** [Movies Dataset](https://www.kaggle.com/datasets/shivamb/netflix-shows?resource=download)
 
 ----------------project 1------------
+```sql
 CREATE DATABASE PROJECT1
 USE PROJECT1
 
 SELECT *
 FROM netflix
-
+```
 ------------------------------------------------------------------------
 ### 1.THE NUMBER OF MOVIES VS TV SHOWS
+```sql
 SELECT N.TYPE,
 COUNT(N.SHOW_ID) AS TOTAL_COUNT
 FROM NETFLIX AS N
 GROUP BY N.TYPE
-
+```
 ------------------------------------------------------------------------
 ### 2.THE MOST COMMON RATING FOR MOVIES AND TV SHOWS
+```sql
 SELECT 
 	TYPE,
 	RATING
@@ -46,15 +49,17 @@ SELECT
 		
 		) T
 WHERE RANKING = 1
-
+```
 ---------------------------------------------------------------------------------
 ###3.ALL MOVIES RELEASED IN A SPECIFIC YEAR (EG:2020)
+```sql
 SELECT * 
 FROM netflix AS N 
 WHERE N.type = 'Movie' AND N.release_year = 2020
-
+```
 ----------------------------------------------------------------------------------
 ###4.TOP 5 COUNTRIES WITH THE MOST CONTENT ON NETFLIX
+```sql
 SELECT TOP(5)
 TRIM(value) AS COUNTRY,
 COUNT(*) AS TOTAL
@@ -62,50 +67,57 @@ FROM netflix AS N
 CROSS APPLY string_split(COUNTRY,',')
 GROUP BY TRIM(value)
 ORDER BY COUNT(*) DESC
-
+```
 ----------------------------------------------------------------------------------
-###5 : LONGEST MOVIE 
+###5 : LONGEST MOVIE
+```sql
 SELECT * 
 FROM netflix AS N
 WHERE N.type = 'Movie'
 AND N.duration = (SELECT MAX(duration) FROM netflix)
-
+```
 ----------------------------------------------------------------------------------
-###5.1 : LONGEST MOVIE AND TV SHOW DURATION 
+###5.1 : LONGEST MOVIE AND TV SHOW DURATION
+```sql
 SELECT N.type,MAX(N.duration) AS DURATION
 FROM netflix AS N
 GROUP BY N.type
-
+```
 ----------------------------------------------------------------------------------
-###6.CONTENT ADDED IN THE LAST FIVE YEARS 
+###6.CONTENT ADDED IN THE LAST FIVE YEARS
+```sql
 SELECT *
 FROM netflix AS N 
 WHERE N.date_added >= DATEADD(YEAR,-5,GETDATE())
-
+```
 ----------------------------------------------------------------------------------
 ###7.ALL THE MOVEIS AND TV SHOWS BY THE DIRECTOR 'RAJIV CHILAKA'
+```sql
 SELECT *
 FROM netflix AS N 
 WHERE N.director LIKE '%Rajiv Chilaka%'
-
+```
 ----------------------------------------------------------------------------------
-###8.TV SHOWS WITH MORE THAN 5 SEASONS 
+###8.TV SHOWS WITH MORE THAN 5 SEASONS
+```sql
 SELECT * ,
 CAST(LEFT(N.duration,CHARINDEX(' ',N.duration) - 1) AS INT) AS SEASONS
 FROM netflix AS N
 WHERE N.type = 'TV Show' 
 AND CAST(LEFT(N.duration,CHARINDEX(' ',N.duration) - 1) AS INT) > 5
-
+```
 ----------------------------------------------------------------------------------
 ###9. NUMBER OF ITEMS IN EACH GENRE
+```sql
 SELECT TRIM(VALUE) AS GENRE,
 COUNT(N.show_id) AS TOTAL_CONTENT
 FROM netflix AS N
 CROSS APPLY string_split(N.listed_in,',')
 GROUP BY TRIM(VALUE)
-
+```
 ----------------------------------------------------------------------------------
-###10. THE AVERAGE CONTENT RELEASED IN INDIA ON NETFLIX IN EACH YEAR 
+###10. THE AVERAGE CONTENT RELEASED IN INDIA ON NETFLIX IN EACH YEAR
+```sql 
 WITH total AS (
     SELECT COUNT(*) AS total_count
     FROM netflix
@@ -123,27 +135,31 @@ N.country,
 DATETRUNC(YEAR, TRY_CONVERT(DATE, N.date_added)),
 T.total_count
 ORDER BY percentage DESC
-
+```
 ------------------------------------------------------------------------------------
-###11.ALL MOVIES THAT ARE DOCUMENTRIES 
+###11.ALL MOVIES THAT ARE DOCUMENTRIES
+```sql
 SELECT * 
 FROM netflix
 WHERE TYPE = 'Movie' AND listed_in LIKE '%Documentaries%'
-
+```
 ------------------------------------------------------------------------------------
 ###12.ALL THE CONTENT WITHOUT A DIRECTOR
+```sql
 SELECT * 
 FROM netflix
 WHERE director IS NULL
-
+```
 ------------------------------------------------------------------------------------
 ###13.TOTAL MOVIES IN WHICH ACTOR SALMAN KHAN APPEARED IN LAST 10 YEARS
+```sql
 SELECT * 
 FROM netflix
 WHERE TYPE = 'MOVIE' AND CAST LIKE '%Salman Khan%' AND DATE_ADDED >= DATEADD(YEAR,-10,GETDATE())
-
+```
 ------------------------------------------------------------------------------------
 ###14.TOP 10 ACTORS WHO HAVE APPEARED IN THE HIGHEST NUMBER OF MOVIES IN INDIA
+```sql
 SELECT TOP(10)
 TRIM(VALUE) AS ACTOR_NAME,COUNT(show_id) AS TOTAL_MOVIES
 FROM netflix
@@ -151,10 +167,10 @@ CROSS APPLY string_split(CAST,',')
 WHERE TYPE = 'Movie' AND country LIKE '%India%'
 GROUP BY TRIM(VALUE)
 ORDER BY COUNT(show_id) DESC 
-
+```
 ------------------------------------------------------------------------------------
 ###15.CATEGORIZE THE CONTENT BASED ON THE PRESENCE OF THE KEYWORDS 'KILL' AND 'VIOLENCE' BASED ON THE DESCRIPTION FIELD. LABEL CONTENT CONTAINING THESE KEYWORDS AS 'BAD' AND ALL OTHER CONTENT AS 'GOOD'. COUNT HOW MANY ITEMS FALL IN EACH CATEGORY.
-
+```sql
 WITH TABLE1 AS (
 SELECT *,
 CASE 
@@ -167,5 +183,4 @@ SELECT CONTENT_TYPE,
 COUNT(*) AS TOTAL_CONTENT
 FROM TABLE1 
 GROUP BY CONTENT_TYPE
-
-Thank you for your support, and I look forward to connecting with you!
+```
